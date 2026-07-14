@@ -52,6 +52,14 @@ export default function App() {
               }
             />
             <Route
+              path="/students/:userId/workbench"
+              element={
+                <RequireRole minRole="teacher">
+                  <Workbench />
+                </RequireRole>
+              }
+            />
+            <Route
               path="/admin"
               element={
                 <RequireRole minRole="admin">

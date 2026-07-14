@@ -369,3 +369,123 @@ a {
 .console-error {
   color: var(--danger);
 }
+
+/* Workbench: toolbar extras, viewing banner, backups, API explorer */
+
+.workbench-toolbar-right {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.workbench-toolbar button {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel-bg);
+  color: var(--text);
+}
+
+.workbench-save-indicator {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.viewing-banner {
+  padding: 0.5rem 1rem;
+  background: var(--accent-bg, rgba(108, 43, 217, 0.1));
+  color: var(--accent);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.backup-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 320px;
+  background: var(--panel-bg);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.backup-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.backup-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.backup-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.backup-size {
+  color: var(--text-muted);
+}
+
+.api-explorer {
+  border-top: 1px solid var(--border);
+  padding: 0.75rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.api-explorer-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.api-explorer-param {
+  width: 100px;
+  padding: 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.api-explorer-warning {
+  color: var(--warn);
+  font-size: 0.8rem;
+  margin: 0 0 0.5rem;
+}
+
+.api-explorer-result {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.json-tree-toggle {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  padding: 0.1rem 0;
+  font-family: var(--mono);
+}
+
+.json-tree-key {
+  color: var(--accent);
+}
+
+.json-tree-value {
+  color: var(--text-muted);
+}
