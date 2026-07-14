@@ -23,10 +23,11 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
   const [fileName, setFileName] = useState('');
   const [rows, setRows] = useState([]);
   const [parseError, setParseError] = useState('');
-  const [defaultPassword, setDefaultPassword] = useState(suggestPassword());
+  const [defaultPassword, setDefaultPassword] = useState(() => suggestPassword());
   const [forceChange, setForceChange] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState(null);
+  const [submitError, setSubmitError] = useState('');
 
   if (!open) return null;
 
@@ -63,6 +64,7 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
     setFileName(file.name);
     setResults(null);
     setParseError('');
+    setSubmitError('');
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -81,6 +83,7 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
 
   async function handleSubmit() {
     setSubmitting(true);
+    setSubmitError('');
     try {
       const res = await api.post('users_bulk.php', {
         default_password: defaultPassword,
@@ -89,6 +92,10 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
       });
       setResults(res.data);
       onCreated();
+    } catch (err) {
+      const message = err.response?.data?.error || err.message || 'Could not create accounts';
+      setSubmitError(message);
+      console.error('Bulk upload failed:', err);
     } finally {
       setSubmitting(false);
     }
@@ -98,6 +105,7 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
     setFileName('');
     setRows([]);
     setParseError('');
+    setSubmitError('');
     setResults(null);
     setDefaultPassword(suggestPassword());
     onClose();
@@ -122,7 +130,12 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
               <code>name</code>/<code>student</code> for display name). One row per student.
             </p>
 
-            <input type="file" accept=".csv,text/csv" onChange={handleFile} />
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              onChange={handleFile}
+              aria-label="Choose a student list CSV file"
+            />
             {fileName && <span className="bulk-upload-filename">{fileName}</span>}
             {parseError && <p className="form-error">{parseError}</p>}
 
@@ -158,7 +171,10 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
                     </thead>
                     <tbody>
                       {rows.map((row, i) => (
-                        <tr key={i} className={row.status === 'invalid' ? 'bulk-row-invalid' : ''}>
+                        <tr
+                          key={`${row.username}-${i}`}
+                          className={row.status === 'invalid' ? 'bulk-row-invalid' : ''}
+                        >
                           <td>{row.username || <em>(blank)</em>}</td>
                           <td>{row.display_name || <em>(blank)</em>}</td>
                           <td>{row.status === 'ok' ? 'Ready' : row.reason}</td>
@@ -180,6 +196,7 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
                 >
                   {submitting ? 'Creating accounts...' : `Create ${validRows.length} account(s)`}
                 </button>
+                {submitError && <p className="form-error bulk-upload-submit-error">{submitError}</p>}
               </>
             )}
           </>
@@ -200,7 +217,7 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
               </thead>
               <tbody>
                 {results.results.map((r, i) => (
-                  <tr key={i} className={r.status === 'skipped' ? 'bulk-row-invalid' : ''}>
+                  <tr key={`${r.username}-${i}`} className={r.status === 'skipped' ? 'bulk-row-invalid' : ''}>
                     <td>{r.username}</td>
                     <td>{r.status === 'created' ? 'Created' : r.reason}</td>
                   </tr>

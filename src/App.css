@@ -723,3 +723,7 @@ a {
   padding: 0.5rem 1.25rem;
   font-weight: 600;
 }
+
+.bulk-upload-submit-error {
+  margin: 0.5rem 1.25rem 0;
+}
