@@ -7,6 +7,7 @@ import ChangePassword from './pages/ChangePassword.jsx';
 import Workbench from './pages/Workbench.jsx';
 import Students from './pages/Students.jsx';
 import Admin from './pages/Admin.jsx';
+import CMFloatAd from './cmFloatAd.jsx';
 import './App.css';
 
 /**
@@ -27,6 +28,7 @@ function HomeRedirect() {
 /** Top-level app: routing, auth provider, header. */
 export default function App() {
   return (
+    <>
     <BrowserRouter>
       <AuthProvider>
         <Header />
@@ -71,5 +73,7 @@ export default function App() {
         </main>
       </AuthProvider>
     </BrowserRouter>
+    <CMFloatAd />
+    </>
   );
 }

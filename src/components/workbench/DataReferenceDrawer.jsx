@@ -39,7 +39,7 @@ const SECTIONS = [
         'not JSON data, so not fetched through fpl.php — it\'s a plain image on a different site. ' +
           'Build the URL yourself: take the number before ".jpg" and use it like ' +
           'https://resources.premierleague.com/premierleague/photos/players/110x140/p{number}.png ' +
-          '(note: .png, not .jpg). A plain <img src="..."> tag works, no axios needed.',
+          '(note: you need to replace the .jpg with .png). A plain <img src="..."> tag works, no axios needed.',
       ],
     ],
   },
