@@ -34,6 +34,13 @@ const SECTIONS = [
       ['form', 'average points over recent gameweeks, as a string'],
       ['selected_by_percent', 'percentage of FPL managers who own this player, as a string'],
       ['minutes / goals_scored / assists / clean_sheets', 'season totals'],
+      [
+        'photo',
+        'not JSON data, so not fetched through fpl.php — it\'s a plain image on a different site. ' +
+          'Build the URL yourself: take the number before ".jpg" and use it like ' +
+          'https://resources.premierleague.com/premierleague/photos/players/110x140/p{number}.png ' +
+          '(note: .png, not .jpg). A plain <img src="..."> tag works, no axios needed.',
+      ],
     ],
   },
   {
