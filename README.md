@@ -236,6 +236,11 @@ explorer.
 - Use the **API explorer** to see what an endpoint's data actually looks
   like before you write code against it, and copy a ready-made snippet
   into your editor.
+- **Data reference** (opens on the left) lists every field on every
+  endpoint, with a one-line explanation of what each one means.
+- **How to write a query** (opens on the right) walks through the
+  useState/useEffect/axios pattern step by step, with three complete,
+  copy-ready example components.
 - Your work saves automatically 30 seconds after you stop typing, and
   you can hit **Save** any time. If you ever wreck something, open
   **Backups** and restore an earlier version.

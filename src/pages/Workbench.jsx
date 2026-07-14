@@ -4,6 +4,8 @@ import OutputFrame from '../components/workbench/OutputFrame.jsx';
 import ConsolePanel from '../components/workbench/ConsolePanel.jsx';
 import ApiExplorer from '../components/workbench/ApiExplorer.jsx';
 import BackupDrawer from '../components/workbench/BackupDrawer.jsx';
+import DataReferenceDrawer from '../components/workbench/DataReferenceDrawer.jsx';
+import LearnDrawer from '../components/workbench/LearnDrawer.jsx';
 import { compileStudentCode } from '../sandbox/compile.js';
 import { STARTER_JSX, STARTER_CSS } from '../sandbox/starterTemplates.js';
 import { api } from '../api.js';
@@ -31,9 +33,12 @@ export default function Workbench() {
   const [loaded, setLoaded] = useState(false);
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved | unsaved | error
   const [savedAt, setSavedAt] = useState(null);
-  const [showBackups, setShowBackups] = useState(false);
   const [showExplorer, setShowExplorer] = useState(false);
   const [viewedDisplayName, setViewedDisplayName] = useState('');
+  const [showDataReference, setShowDataReference] = useState(false);
+  // Backups and the "how to write a query" guide both live on the right
+  // edge, so at most one is open at a time: null | 'backups' | 'learn'.
+  const [rightDrawer, setRightDrawer] = useState(null);
 
   const outputRef = useRef(null);
   const autosaveTimer = useRef(null);
@@ -169,10 +174,16 @@ export default function Workbench() {
         )}
         <span className="workbench-hint">Ctrl+Enter also runs your code</span>
         <div className="workbench-toolbar-right">
+          <button type="button" onClick={() => setShowDataReference((v) => !v)}>
+            {showDataReference ? 'Hide data reference' : 'Data reference'}
+          </button>
+          <button type="button" onClick={() => setRightDrawer((v) => (v === 'learn' ? null : 'learn'))}>
+            How to write a query
+          </button>
           <button type="button" onClick={() => setShowExplorer((v) => !v)}>
             {showExplorer ? 'Hide API explorer' : 'API explorer'}
           </button>
-          <button type="button" onClick={() => setShowBackups(true)}>
+          <button type="button" onClick={() => setRightDrawer('backups')}>
             Backups
           </button>
         </div>
@@ -210,11 +221,17 @@ export default function Workbench() {
           )}
         </div>
       </div>
+      <DataReferenceDrawer open={showDataReference} onClose={() => setShowDataReference(false)} />
       <BackupDrawer
-        open={showBackups}
-        onClose={() => setShowBackups(false)}
+        open={rightDrawer === 'backups'}
+        onClose={() => setRightDrawer(null)}
         onRestored={loadWorkspace}
         userId={viewingOtherUser ? userId : null}
+      />
+      <LearnDrawer
+        open={rightDrawer === 'learn'}
+        onClose={() => setRightDrawer(null)}
+        onCopy={(text) => setMessages((prev) => [...prev, withId({ type: 'log', text })])}
       />
     </div>
   );
