@@ -50,6 +50,23 @@ pre {
 button {
   font-family: inherit;
   cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 a {
@@ -131,7 +148,6 @@ a {
   border-color: var(--accent);
 }
 
-.app-header-user button,
 .app-header-user .button-link {
   border: 1px solid var(--border);
   background: transparent;
@@ -144,7 +160,6 @@ a {
   display: inline-block;
 }
 
-.app-header-user button:hover,
 .app-header-user .button-link:hover {
   border-color: var(--accent);
   color: var(--accent);
@@ -208,32 +223,7 @@ a {
 .login-form button {
   margin-top: 1rem;
   padding: 0.6rem;
-  border: none;
-  border-radius: 4px;
-  background: var(--accent);
-  color: #fff;
   font-weight: 600;
-}
-
-.login-form button:hover:not(:disabled) {
-  background: var(--accent-hover);
-}
-
-.login-form button:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.login-form button[type='button'] {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.login-form button[type='button']:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: transparent;
 }
 
 .form-error {
@@ -269,15 +259,7 @@ a {
 
 .run-button {
   padding: 0.5rem 1.25rem;
-  border: none;
-  border-radius: 4px;
-  background: var(--accent);
-  color: #fff;
   font-weight: 600;
-}
-
-.run-button:hover {
-  background: var(--accent-hover);
 }
 
 .workbench-hint {
@@ -373,10 +355,6 @@ a {
 }
 
 .console-panel-header button {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;
   padding: 0.2rem 0.6rem;
   font-size: 0.8rem;
 }
@@ -417,10 +395,6 @@ a {
 
 .workbench-toolbar button {
   padding: 0.4rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--panel-bg);
-  color: var(--text);
 }
 
 .workbench-save-indicator {
@@ -576,10 +550,6 @@ a {
 
 .inline-form button {
   padding: 0.45rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--accent);
-  color: #fff;
 }
 
 .temp-password-notice {
@@ -619,9 +589,14 @@ a {
   padding: 0.3rem 0.6rem;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   text-decoration: none;
+}
+
+.data-table-actions a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .data-table-actions button.danger {
@@ -689,10 +664,6 @@ a {
 }
 
 .modal-header button {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;
   padding: 0.3rem 0.7rem;
 }
 
@@ -750,14 +721,5 @@ a {
 .bulk-upload-submit {
   margin: 1rem 1.25rem 0;
   padding: 0.5rem 1.25rem;
-  border: none;
-  border-radius: 4px;
-  background: var(--accent);
-  color: #fff;
   font-weight: 600;
-}
-
-.bulk-upload-submit:disabled {
-  opacity: 0.5;
-  cursor: default;
 }
