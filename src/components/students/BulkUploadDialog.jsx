@@ -159,6 +159,12 @@ export default function BulkUploadDialog({ open, onClose, onCreated, existingUse
                     Force password change on next login
                   </label>
                 </div>
+                {defaultPassword.length > 0 && defaultPassword.length < 8 && (
+                  <p className="form-error bulk-upload-password-hint">
+                    The default password needs at least 8 characters ({defaultPassword.length} so far) before you
+                    can create accounts.
+                  </p>
+                )}
 
                 <div className="bulk-upload-preview">
                   <table className="data-table">

@@ -683,6 +683,24 @@ a {
   margin: 0 1.25rem;
 }
 
+.modal-dialog > input[type='file']::file-selector-button {
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin-right: 0.75rem;
+}
+
+.modal-dialog > input[type='file']::file-selector-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .bulk-upload-filename {
   margin-left: 0.75rem;
   color: var(--text-muted);
@@ -726,4 +744,8 @@ a {
 
 .bulk-upload-submit-error {
   margin: 0.5rem 1.25rem 0;
+}
+
+.bulk-upload-password-hint {
+  margin: -0.5rem 1.25rem 1rem;
 }
