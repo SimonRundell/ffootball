@@ -131,15 +131,21 @@ a {
   border-color: var(--accent);
 }
 
-.app-header-user button {
+.app-header-user button,
+.app-header-user .button-link {
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text);
   border-radius: 4px;
   padding: 0.35rem 0.75rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  display: inline-block;
 }
 
-.app-header-user button:hover {
+.app-header-user button:hover,
+.app-header-user .button-link:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
