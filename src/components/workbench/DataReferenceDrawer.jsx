@@ -135,6 +135,30 @@ export default function DataReferenceDrawer({ open, onClose }) {
             </table>
           </details>
         ))}
+
+        <div className="reference-external">
+          <p className="reference-description">
+            The Premier League doesn't publish official documentation for this API. These
+            community-written guides cover the same endpoints in more depth, if you want to dig
+            further:
+          </p>
+          <ul className="reference-external-links">
+            <li>
+              <a href="https://www.oliverlooney.com/blogs/FPL-APIs-Explained" target="_blank" rel="noopener noreferrer">
+                FPL APIs Explained (Oliver Looney)
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://medium.com/@frenzelts/fantasy-premier-league-api-endpoints-a-detailed-guide-acbd5598eb19"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Fantasy Premier League API Endpoints: A Detailed Guide (Medium)
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
