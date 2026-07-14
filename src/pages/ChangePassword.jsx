@@ -1,27 +1,33 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../api.js';
 
 /**
- * Forced password-change screen, shown when me.php reports
- * must_change_password. Also reachable voluntarily later as "change my
- * password" once that link exists in a settings screen.
+ * Password-change screen. Used two ways: as the forced first-login
+ * screen (when me.php reports must_change_password, reached via
+ * redirect and with no way out but success), and as a voluntary
+ * "change my password" action any logged-in role can reach from the
+ * header, which offers a Cancel back to the workbench.
  */
 export default function ChangePassword() {
   const { user, loading, refresh } = useAuth();
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
 
   if (!loading && !user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!loading && user && !user.must_change_password) {
-    return <Navigate to="/" replace />;
+  const forced = Boolean(user?.must_change_password);
+
+  if (done && !forced) {
+    return <Navigate to="/workbench" replace />;
   }
 
   /** @param {import('react').FormEvent} e */
@@ -41,6 +47,7 @@ export default function ChangePassword() {
         new_password: newPassword,
       });
       await refresh();
+      setDone(true);
     } catch (err) {
       setError(err.response?.data?.error || 'Could not change password');
     } finally {
@@ -51,9 +58,11 @@ export default function ChangePassword() {
   return (
     <div className="login-page">
       <form className="login-form" onSubmit={handleSubmit}>
-        <h1>Choose a new password</h1>
+        <h1>{forced ? 'Choose a new password' : 'Change your password'}</h1>
         <p className="login-subtitle">
-          Your account needs a new password before you can continue.
+          {forced
+            ? 'Your account needs a new password before you can continue.'
+            : 'Enter your current password and choose a new one.'}
         </p>
         <label htmlFor="current">Current password</label>
         <input
@@ -88,6 +97,11 @@ export default function ChangePassword() {
         <button type="submit" disabled={submitting}>
           {submitting ? 'Saving...' : 'Save new password'}
         </button>
+        {!forced && (
+          <button type="button" onClick={() => navigate(-1)}>
+            Cancel
+          </button>
+        )}
       </form>
     </div>
   );

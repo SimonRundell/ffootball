@@ -27,6 +27,7 @@ export default function Header() {
       <div className="app-header-user">
         <span>{user.display_name}</span>
         <span className={`role-badge role-${user.role}`}>{user.role}</span>
+        <Link to="/change-password">Change password</Link>
         <button type="button" onClick={logout}>
           Log out
         </button>

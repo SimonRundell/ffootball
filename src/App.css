@@ -199,6 +199,18 @@ a {
   cursor: default;
 }
 
+.login-form button[type='button'] {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.login-form button[type='button']:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: transparent;
+}
+
 .form-error {
   color: var(--danger);
   font-size: 0.9rem;
