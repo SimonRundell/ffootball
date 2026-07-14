@@ -220,19 +220,19 @@ export default function Workbench() {
             />
           )}
         </div>
+        <DataReferenceDrawer open={showDataReference} onClose={() => setShowDataReference(false)} />
+        <BackupDrawer
+          open={rightDrawer === 'backups'}
+          onClose={() => setRightDrawer(null)}
+          onRestored={loadWorkspace}
+          userId={viewingOtherUser ? userId : null}
+        />
+        <LearnDrawer
+          open={rightDrawer === 'learn'}
+          onClose={() => setRightDrawer(null)}
+          onCopy={(text) => setMessages((prev) => [...prev, withId({ type: 'log', text })])}
+        />
       </div>
-      <DataReferenceDrawer open={showDataReference} onClose={() => setShowDataReference(false)} />
-      <BackupDrawer
-        open={rightDrawer === 'backups'}
-        onClose={() => setRightDrawer(null)}
-        onRestored={loadWorkspace}
-        userId={viewingOtherUser ? userId : null}
-      />
-      <LearnDrawer
-        open={rightDrawer === 'learn'}
-        onClose={() => setRightDrawer(null)}
-        onCopy={(text) => setMessages((prev) => [...prev, withId({ type: 'log', text })])}
-      />
     </div>
   );
 }

@@ -255,8 +255,6 @@ a {
   padding: 0.5rem 1rem;
   background: var(--panel-bg);
   border-bottom: 1px solid var(--border);
-  position: relative;
-  z-index: 25;
 }
 
 .run-button {
@@ -273,6 +271,7 @@ a {
   flex: 1;
   display: flex;
   min-height: 0;
+  position: relative;
 }
 
 .editor-pane {
@@ -413,7 +412,7 @@ a {
 }
 
 .backup-drawer {
-  position: fixed;
+  position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
@@ -755,7 +754,7 @@ a {
 /* Workbench side drawers: data reference (left), learn (right) */
 
 .side-drawer {
-  position: fixed;
+  position: absolute;
   top: 0;
   bottom: 0;
   width: 380px;
