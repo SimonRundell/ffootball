@@ -1,0 +1,28 @@
+{
+  "name": "ffootball",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "doctor": "npx react-doctor@latest"
+  },
+  "dependencies": {
+    "@babel/standalone": "^8.0.4",
+    "@monaco-editor/react": "^4.7.0",
+    "axios": "^1.18.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.71.0",
+    "react-doctor": "^0.7.7",
+    "vite": "^8.1.1"
+  }
+}
