@@ -15,7 +15,10 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="app-header-title">
-        <Link to="/">FPL Data Lab</Link>
+        <Link to="/">
+          <img src="/favicon.png" alt="" className="app-header-logo" />
+          FPL Data Lab
+        </Link>
       </div>
       <nav className="app-header-nav">
         <Link to="/workbench">Workbench</Link>

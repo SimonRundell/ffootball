@@ -74,10 +74,20 @@ a {
 }
 
 .app-header-title a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 700;
   font-size: 1.1rem;
   text-decoration: none;
   color: var(--text);
+}
+
+.app-header-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: cover;
 }
 
 .app-header-nav {
@@ -154,6 +164,15 @@ a {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 2rem;
+}
+
+.login-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  align-self: center;
+  margin-bottom: 0.5rem;
 }
 
 .login-form h1 {

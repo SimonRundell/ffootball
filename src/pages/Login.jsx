@@ -34,6 +34,7 @@ export default function Login() {
   return (
     <div className="login-page">
       <form className="login-form" onSubmit={handleSubmit}>
+        <img src="/favicon.png" alt="" className="login-logo" />
         <h1>FPL Data Lab</h1>
         <p className="login-subtitle">Exeter College classroom sign in</p>
         <label htmlFor="username">Username</label>
