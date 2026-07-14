@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import { api } from '../../api.js';
 
 /**
- * Lists the student's saved backups (newest 20, server-pruned) with a
+ * Lists a workspace's saved backups (newest 20, server-pruned) with a
  * Restore action per row. Restoring itself takes a backup of the
- * current state first, so it is always reversible.
+ * current state first, so it is always reversible. Without userId this
+ * manages the caller's own backups; with userId (teacher/admin), a
+ * student's.
  *
- * @param {{ open: boolean, onClose: () => void, onRestored: () => void }} props
+ * @param {{ open: boolean, onClose: () => void, onRestored: () => void, userId?: string|number|null }} props
  */
-export default function BackupDrawer({ open, onClose, onRestored }) {
+export default function BackupDrawer({ open, onClose, onRestored, userId = null }) {
   const [backups, setBackups] = useState([]);
   const [loading, setLoading] = useState(false);
   const [restoringId, setRestoringId] = useState(null);
@@ -16,16 +18,19 @@ export default function BackupDrawer({ open, onClose, onRestored }) {
   useEffect(() => {
     if (!open) return;
     setLoading(true);
+    const query = userId ? `?user_id=${userId}` : '';
     api
-      .get('backups.php')
+      .get(`backups.php${query}`)
       .then((res) => setBackups(res.data))
       .finally(() => setLoading(false));
-  }, [open]);
+  }, [open, userId]);
 
   async function handleRestore(backupId) {
     setRestoringId(backupId);
     try {
-      await api.post('backups.php', { backup_id: backupId });
+      const body = { backup_id: backupId };
+      if (userId) body.user_id = userId;
+      await api.post('backups.php', body);
       onRestored();
       onClose();
     } finally {

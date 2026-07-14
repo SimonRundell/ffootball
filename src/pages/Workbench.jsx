@@ -162,11 +162,9 @@ export default function Workbench() {
           <button type="button" onClick={() => setShowExplorer((v) => !v)}>
             {showExplorer ? 'Hide API explorer' : 'API explorer'}
           </button>
-          {!readOnly && (
-            <button type="button" onClick={() => setShowBackups(true)}>
-              Backups
-            </button>
-          )}
+          <button type="button" onClick={() => setShowBackups(true)}>
+            Backups
+          </button>
         </div>
       </div>
       <div className="workbench-panes">
@@ -200,9 +198,12 @@ export default function Workbench() {
           )}
         </div>
       </div>
-      {!readOnly && (
-        <BackupDrawer open={showBackups} onClose={() => setShowBackups(false)} onRestored={loadWorkspace} />
-      )}
+      <BackupDrawer
+        open={showBackups}
+        onClose={() => setShowBackups(false)}
+        onRestored={loadWorkspace}
+        userId={viewingOtherUser ? userId : null}
+      />
     </div>
   );
 }

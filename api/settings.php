@@ -3,6 +3,7 @@
  * Admin-only system settings.
  *
  * GET  /settings.php                    all settings
+ * GET  /settings.php?action=stats       cache row count/age and workspace DB size
  * PUT  /settings.php                    { fpl_base_url?, cache_ttl_seconds? }
  * POST /settings.php?action=clear_cache truncates fpl_cache
  */
@@ -14,6 +15,26 @@ require_once __DIR__ . '/auth_check.php';
 require_role('admin');
 $pdo = db();
 $method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'GET' && ($_GET['action'] ?? '') === 'stats') {
+    $cache = $pdo->query(
+        'SELECT COUNT(*) AS rows_count, MIN(fetched_at) AS oldest, MAX(fetched_at) AS newest FROM fpl_cache'
+    )->fetch();
+
+    $workspaceBytes = $pdo->query(
+        'SELECT COALESCE(SUM(LENGTH(jsx_code) + LENGTH(css_code) + LENGTH(notes)), 0) FROM workspaces'
+    )->fetchColumn();
+
+    $studentCount = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'student'")->fetchColumn();
+
+    json_out([
+        'cache_rows' => (int) $cache['rows_count'],
+        'cache_oldest' => $cache['oldest'],
+        'cache_newest' => $cache['newest'],
+        'workspace_bytes' => (int) $workspaceBytes,
+        'student_count' => (int) $studentCount,
+    ]);
+}
 
 if ($method === 'GET') {
     $rows = $pdo->query('SELECT setting_key, setting_value FROM settings')->fetchAll();
