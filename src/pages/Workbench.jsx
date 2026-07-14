@@ -76,7 +76,18 @@ export default function Workbench() {
   }, [userId, viewingOtherUser]);
 
   const handleSandboxMessage = useCallback((msg) => {
-    setMessages((prev) => [...prev, withId(msg)]);
+    setMessages((prev) => {
+      // React's dev build often logs the same error two or three times,
+      // sometimes with a different line number depending on which
+      // handler caught it; collapsing an immediate repeat keeps the
+      // panel readable for students.
+      const normalize = (text) => text.replace(/\s*\(line \d+\)$/, '');
+      const last = prev[prev.length - 1];
+      if (last && last.type === msg.type && normalize(last.text) === normalize(msg.text)) {
+        return prev;
+      }
+      return [...prev, withId(msg)];
+    });
   }, []);
 
   const handleSave = useCallback(async () => {

@@ -53,7 +53,14 @@ React + Vite + JavaScript (no TypeScript) on the frontend, PHP 8 +
 MariaDB (PDO, prepared statements) on the backend. Monaco is the code
 editor; `@babel/standalone` compiles student JSX in the browser;
 student code runs inside a sandboxed iframe loading local React 18 UMD
-builds, never a CDN. See PLAN.md section 4 for the full stack table.
+builds, never a CDN. The sandbox deliberately uses the *development*
+builds, not production: production replaces error messages with a bare
+numeric code and a decoder-page URL, which means nothing to a student.
+A translation layer in `src/sandbox/sandboxHtml.js` further rewrites
+the handful of errors beginners hit constantly (rendering a raw object
+instead of one of its fields, reading a property before data has
+loaded) into a plain-English hint. See PLAN.md section 4 for the full
+stack table.
 
 ## Local setup (Laragon)
 

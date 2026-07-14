@@ -5,6 +5,14 @@
  * code, the student's CSS, and the API base URL, then renders
  * `<DataDisplay />` into #root.
  *
+ * Deliberately uses the *development* React/ReactDOM builds, not
+ * production: production replaces error messages with a bare numeric
+ * code and a decoder-page URL (e.g. "Minified React error #31"), which
+ * is meaningless to a student. The development build gives the real
+ * message. friendlyMessage() below further translates the handful of
+ * errors beginners hit constantly (rendering a raw object, reading a
+ * property of undefined) into a plain-English hint.
+ *
  * The bootstrap also wraps console.log/warn/error and window.onerror /
  * unhandledrejection so the host page's console panel can show them.
  *
@@ -15,8 +23,8 @@ export function buildSandboxHtml() {
 <html>
 <head>
 <meta charset="utf-8" />
-<script src="/sandbox/react.production.min.js"></script>
-<script src="/sandbox/react-dom.production.min.js"></script>
+<script src="/sandbox/react.development.js"></script>
+<script src="/sandbox/react-dom.development.js"></script>
 </head>
 <body>
 <div id="root"></div>
@@ -25,6 +33,42 @@ export function buildSandboxHtml() {
 (function () {
   function post(type, text) {
     parent.postMessage({ source: 'ffootball-sandbox', type, text }, '*');
+  }
+
+  /**
+   * Translates a handful of common beginner error messages into a
+   * plain-English hint, and shortens anything absurdly long (old cached
+   * production builds, or a stray minified error) so the console panel
+   * stays readable. Unrecognised messages pass through unchanged.
+   */
+  function friendlyMessage(raw) {
+    var text = String(raw);
+
+    if (/Minified React error #31/.test(text)) {
+      return 'You tried to display a whole object or array directly in your JSX, e.g. {player} instead of {player.web_name}. Pick one field to show instead.';
+    }
+
+    var devMatch = text.match(/Objects are not valid as a React child \\(found: (object with keys \\{[^}]*\\}|\\[object [^\\]]*\\])\\)/);
+    if (devMatch) {
+      var found = devMatch[1];
+      if (found.length > 80) found = found.slice(0, 80) + '...}';
+      return 'You tried to display a whole object or array directly in your JSX (found: ' + found + '). Pick one field to show instead, e.g. {player.web_name} instead of {player}.';
+    }
+
+    if (/Cannot read propert(y|ies) of (undefined|null)/.test(text)) {
+      return text + ' — check the data has finished loading before you use it (e.g. return a loading message first while your state is still null).';
+    }
+
+    if (/is not a function/.test(text)) {
+      return text + ' — check the spelling, and that you are calling it on the right thing.';
+    }
+
+    if (text.length > 300) {
+      var cut = text.indexOf('?invariant=');
+      text = cut !== -1 ? text.slice(0, cut) + ' (details omitted)' : text.slice(0, 300) + '...';
+    }
+
+    return text;
   }
 
   var originalLog = console.log;
@@ -42,14 +86,25 @@ export function buildSandboxHtml() {
 
   console.log = function () { post('log', stringifyArgs(arguments)); originalLog.apply(console, arguments); };
   console.warn = function () { post('warn', stringifyArgs(arguments)); originalWarn.apply(console, arguments); };
-  console.error = function () { post('error', stringifyArgs(arguments)); originalError.apply(console, arguments); };
+  console.error = function () {
+    var text = stringifyArgs(arguments);
+    // React's dev build follows a real error with its own "add an error
+    // boundary" diagnostic; it's not actionable for a beginner and the
+    // real error is already shown, so skip it in the student's panel
+    // (it still reaches the real browser console below).
+    if (!/^The above error occurred|^Consider adding an error boundary/.test(text)) {
+      post('error', friendlyMessage(text));
+    }
+    originalError.apply(console, arguments);
+  };
 
   window.onerror = function (message, source, lineno) {
-    post('error', 'Error: ' + message + ' (line ' + lineno + ')');
+    post('error', 'Error: ' + friendlyMessage(message) + ' (line ' + lineno + ')');
   };
 
   window.addEventListener('unhandledrejection', function (event) {
-    post('error', 'Unhandled promise rejection: ' + (event.reason && event.reason.message ? event.reason.message : event.reason));
+    var reason = event.reason && event.reason.message ? event.reason.message : event.reason;
+    post('error', 'Unhandled promise rejection: ' + friendlyMessage(reason));
   });
 
   /**
@@ -119,7 +174,7 @@ export function buildSandboxHtml() {
       var root = ReactDOM.createRoot(document.getElementById('root'));
       root.render(React.createElement(DataDisplay));
     } catch (err) {
-      post('error', 'Runtime error: ' + err.message);
+      post('error', 'Runtime error: ' + friendlyMessage(err.message));
     }
   });
 
