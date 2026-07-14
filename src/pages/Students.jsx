@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import BackupDrawer from '../components/workbench/BackupDrawer.jsx';
+import BulkUploadDialog from '../components/students/BulkUploadDialog.jsx';
 
 /**
  * Teacher/admin student list: display name, username, last save time,
@@ -21,6 +22,7 @@ export default function Students() {
   const [formError, setFormError] = useState('');
   const [tempPassword, setTempPassword] = useState(null);
   const [backupUserId, setBackupUserId] = useState(null);
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
 
   function load() {
     setLoading(true);
@@ -71,9 +73,14 @@ export default function Students() {
     <div className="page page-wide">
       <div className="page-header">
         <h1>{isAdmin ? 'All accounts' : 'Students'}</h1>
-        <button type="button" onClick={() => setShowCreate((v) => !v)}>
-          {showCreate ? 'Cancel' : 'Create account'}
-        </button>
+        <div className="page-header-actions">
+          <button type="button" onClick={() => setShowBulkUpload(true)}>
+            Bulk upload students
+          </button>
+          <button type="button" onClick={() => setShowCreate((v) => !v)}>
+            {showCreate ? 'Cancel' : 'Create account'}
+          </button>
+        </div>
       </div>
 
       {showCreate && (
@@ -175,6 +182,13 @@ export default function Students() {
         userId={backupUserId}
         onClose={() => setBackupUserId(null)}
         onRestored={() => {}}
+      />
+
+      <BulkUploadDialog
+        open={showBulkUpload}
+        onClose={() => setShowBulkUpload(false)}
+        onCreated={load}
+        existingUsernames={accounts.map((a) => a.username)}
       />
     </div>
   );

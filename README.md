@@ -36,7 +36,7 @@ The phased build log and acceptance checks are in
   hidden) with a "viewing X's work" banner.
 - View and restore a student's backups.
 - Reset a student's password (shown once) and create new student
-  accounts.
+  accounts, one at a time or in bulk from a CSV class list.
 - Deactivate a student account (their work is preserved, not deleted).
 
 ### Admin (everything a teacher has, plus)
@@ -161,6 +161,29 @@ the sandbox shares the session cookie for its API calls, and the code
 running inside is always the logged-in student's own work on a closed
 college system. This is the same model CodePen used for years.
 
+## Bulk student upload
+
+From Students or Admin, "Bulk upload students" accepts a UTF-8 CSV
+(export "CSV UTF-8" from Excel, not the plain "CSV" option, so accented
+characters survive) with a header row. Two columns are required:
+
+| Column | Accepted header names |
+| --- | --- |
+| Username | `username`, `user`, or `login` |
+| Display name | `display_name`, `full name`, `name`, or `student` |
+
+Header matching is case- and spacing-insensitive, so "Full Name" and
+"display_name" both work. Every row is previewed before anything is
+created: rows missing a value, duplicated within the file, or matching
+a username that already exists are flagged in red and skipped
+automatically. Set one default password for the whole batch (everyone
+in the file gets the same one, shown in the dialog so you can write it
+on the board) and choose whether accounts must change it on first
+login (on by default, matching every other account-creation path in
+the app). The upload runs row-by-row on the server, so one bad row
+never blocks the rest; the results table afterwards shows exactly
+which accounts were created and which were skipped and why.
+
 ## Backups and restore
 
 Every save writes a `workspace_backups` row in addition to updating the
@@ -183,6 +206,7 @@ db.php` first, per house style, and use PHP sessions for auth.
 | `me.php` | GET | any | current user + role, used on app boot |
 | `change_password.php` | POST | any | change your own password |
 | `users.php` | GET/POST/PUT/DELETE | teacher (students only) / admin (all) | account CRUD, password reset, activate/deactivate |
+| `users_bulk.php` | POST | teacher+ | bulk-create student accounts from a parsed CSV |
 | `workspace.php` | GET/PUT | student (own) / teacher+ (read-only via `?user_id=`) | load/save the workspace |
 | `backups.php` | GET/POST | student (own) / teacher+ | list/restore backups |
 | `settings.php` | GET/PUT/POST | admin | FPL base URL, cache TTL, clear cache, stats |
