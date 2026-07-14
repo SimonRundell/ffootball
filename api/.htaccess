@@ -1,0 +1,6 @@
+# Gzip compresses the FPL proxy's JSON responses (bootstrap-static is
+# roughly 2 MB uncompressed). Requires mod_deflate; Apache ignores this
+# block harmlessly if the module is not loaded.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/json
+</IfModule>
