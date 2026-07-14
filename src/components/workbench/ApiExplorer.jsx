@@ -57,6 +57,7 @@ export default function ApiExplorer({ onCopySnippet }) {
     <div className="api-explorer">
       <div className="api-explorer-controls">
         <select
+          aria-label="FPL endpoint"
           value={selected.key}
           onChange={(e) => setSelected(ENDPOINTS.find((ep) => ep.key === e.target.value))}
         >

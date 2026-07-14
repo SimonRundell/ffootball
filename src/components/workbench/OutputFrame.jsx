@@ -48,6 +48,10 @@ const OutputFrame = forwardRef(function OutputFrame({ onMessage }, ref) {
 
   return (
     <div className="output-frame-container" ref={containerRef}>
+      {/* allow-same-origin is required so the sandbox shares the session
+          cookie for API calls; this is accepted here because the code
+          running inside is our own students' on a closed college system
+          (see PLAN.md section 7 for the full rationale). */}
       <iframe
         key={frameKey}
         ref={iframeRef}

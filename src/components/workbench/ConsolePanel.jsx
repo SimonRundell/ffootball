@@ -15,8 +15,8 @@ export default function ConsolePanel({ messages, onClear }) {
       </div>
       <div className="console-panel-body">
         {messages.length === 0 && <p className="console-empty">No output yet. Click Run.</p>}
-        {messages.map((m, i) => (
-          <div key={i} className={`console-line console-${m.type}`}>
+        {messages.map((m) => (
+          <div key={m.id} className={`console-line console-${m.type}`}>
             {m.text}
           </div>
         ))}

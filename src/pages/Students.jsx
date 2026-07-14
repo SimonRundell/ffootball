@@ -99,7 +99,7 @@ export default function Students() {
             required
           />
           {roleOptions.length > 1 && (
-            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+            <select aria-label="Role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
               {roleOptions.map((r) => (
                 <option key={r} value={r}>
                   {r}

@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Editor from '../components/workbench/Editor.jsx';
 import OutputFrame from '../components/workbench/OutputFrame.jsx';
 import ConsolePanel from '../components/workbench/ConsolePanel.jsx';
 import ApiExplorer from '../components/workbench/ApiExplorer.jsx';
@@ -10,6 +9,10 @@ import { STARTER_JSX, STARTER_CSS } from '../sandbox/starterTemplates.js';
 import { api } from '../api.js';
 
 const AUTOSAVE_DELAY_MS = 30000;
+
+// Monaco ships a lot of code; load it only once the workbench actually
+// mounts rather than on every route (e.g. the login screen).
+const Editor = lazy(() => import('../components/workbench/Editor.jsx'));
 
 /**
  * The editor + output + console + API explorer workbench. Loads the
@@ -35,6 +38,13 @@ export default function Workbench() {
   const outputRef = useRef(null);
   const autosaveTimer = useRef(null);
   const dirtyRef = useRef(false);
+  const nextMessageId = useRef(0);
+
+  /** Wraps a console/sandbox message with a stable id for list keys. */
+  function withId(msg) {
+    nextMessageId.current += 1;
+    return { ...msg, id: nextMessageId.current };
+  }
 
   const loadWorkspace = useCallback(() => {
     const query = viewingOtherUser ? `?user_id=${userId}` : '';
@@ -61,7 +71,7 @@ export default function Workbench() {
   }, [userId, viewingOtherUser]);
 
   const handleSandboxMessage = useCallback((msg) => {
-    setMessages((prev) => [...prev, msg]);
+    setMessages((prev) => [...prev, withId(msg)]);
   }, []);
 
   const handleSave = useCallback(async () => {
@@ -107,7 +117,7 @@ export default function Workbench() {
     const result = compileStudentCode(jsxCode);
 
     if (result.error) {
-      setMessages((prev) => [...prev, { type: 'error', text: `Syntax error: ${result.error}` }]);
+      setMessages((prev) => [...prev, withId({ type: 'error', text: `Syntax error: ${result.error}` })]);
       return;
     }
 
@@ -168,31 +178,33 @@ export default function Workbench() {
         </div>
       </div>
       <div className="workbench-panes">
-        <Editor
-          jsxCode={jsxCode}
-          cssCode={cssCode}
-          notes={notes}
-          readOnly={readOnly}
-          onChangeJsx={(v) => {
-            setJsxCode(v);
-            markDirty();
-          }}
-          onChangeCss={(v) => {
-            setCssCode(v);
-            markDirty();
-          }}
-          onChangeNotes={(v) => {
-            setNotes(v);
-            markDirty();
-          }}
-        />
+        <Suspense fallback={<p className="loading-notice">Loading editor...</p>}>
+          <Editor
+            jsxCode={jsxCode}
+            cssCode={cssCode}
+            notes={notes}
+            readOnly={readOnly}
+            onChangeJsx={(v) => {
+              setJsxCode(v);
+              markDirty();
+            }}
+            onChangeCss={(v) => {
+              setCssCode(v);
+              markDirty();
+            }}
+            onChangeNotes={(v) => {
+              setNotes(v);
+              markDirty();
+            }}
+          />
+        </Suspense>
         <div className="workbench-right">
           <OutputFrame ref={outputRef} onMessage={handleSandboxMessage} />
           <ConsolePanel messages={messages} onClear={() => setMessages([])} />
           {showExplorer && (
             <ApiExplorer
               onCopySnippet={() =>
-                setMessages((prev) => [...prev, { type: 'log', text: 'Axios snippet copied to clipboard' }])
+                setMessages((prev) => [...prev, withId({ type: 'log', text: 'Axios snippet copied to clipboard' })])
               }
             />
           )}
