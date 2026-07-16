@@ -12,8 +12,9 @@ House rules (apply to every phase):
   tab inside the sandbox is the only exception, by design.
 - Every JS function/component gets JSDoc; every PHP file and function gets
   PHPDoc. Comments explain constraints, not narrate lines.
-- Frontend config comes from `.config.json` at the project root (imported by
-  Vite): `{ "apiBaseUrl": "http://localhost/ffootball/api" }`.
+- Frontend config comes from `public/.config.json` (a static file Vite
+  copies into `dist/` unchanged, fetched at runtime, not imported):
+  `{ "apiBaseUrl": "http://localhost/ffootball/api" }`.
 - Every PHP endpoint begins:
   ```php
   require_once __DIR__ . '/cors.php';   // always first
@@ -47,7 +48,7 @@ this machine. Vite serves only the frontend. No Vite proxy.
    `public/sandbox/react.production.min.js` and
    `public/sandbox/react-dom.production.min.js` (from the react@18 npm
    package's umd folder, not a CDN reference at runtime).
-5. Create `.config.json` (dev values) and `.config.sample.json`.
+5. Create `public/.config.json` (dev values) and `public/.config.sample.json`.
 6. Create `api/` folder with `config.sample.php` (DB credentials template).
    Git-ignore `api/config.php` and nothing else unusual.
 7. `git init` if needed; sensible `.gitignore` (node_modules, dist,
@@ -106,8 +107,9 @@ returns 400. Not logged in returns 401.
 ## Phase 3 — Frontend shell
 
 1. Set `axios.defaults.withCredentials = true` once, in a small
-   `src/api.js` module that also builds URLs from `.config.json`. All
-   components call the API through this module.
+   `src/api.js` module that fetches `public/.config.json` at runtime
+   (`loadConfig()`, awaited in `main.jsx` before the app renders) and
+   builds URLs from it. All components call the API through this module.
 2. Login page; on success route by role. Use react-router or a simple
    state-based router, whichever keeps the code most readable for students to
    later study; document the choice.

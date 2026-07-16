@@ -25,4 +25,9 @@ dist-ssr
 
 # FFootball project specific
 api/config.php
+api/config.live.php
 .config.json
+
+# Data
+data/ffootball_backup.sql
+

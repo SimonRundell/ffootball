@@ -75,7 +75,7 @@ stack table.
    With Laragon's default vhost, the API ends up reachable at
    `http://localhost/api/...`. If your Laragon setup instead serves each
    `www` subfolder at its own path, your API base URL will be
-   `http://localhost/ffootball/api` instead; adjust `.config.json`
+   `http://localhost/ffootball/api` instead; adjust `public/.config.json`
    accordingly.
 
 2. **Install frontend dependencies:**
@@ -91,9 +91,9 @@ stack table.
 4. **Configure the backend.** Copy `api/config.sample.php` to
    `api/config.php` (git-ignored) and fill in your MariaDB credentials.
 
-5. **Configure the frontend.** Copy `.config.sample.json` to
-   `.config.json` (git-ignored) and set `apiBaseUrl` to wherever step 1
-   put the API, for example:
+5. **Configure the frontend.** Copy `public/.config.sample.json` to
+   `public/.config.json` (git-ignored) and set `apiBaseUrl` to wherever
+   step 1 put the API, for example:
 
    ```json
    { "apiBaseUrl": "http://localhost/api" }
@@ -130,9 +130,12 @@ stack table.
    `db/schema.sql` via phpMyAdmin.
 4. Run `install.php` once via curl or a browser POST tool, then delete
    it from the server.
-5. Set the production `.config.json` to
+5. Set `public/.config.json` to
    `{ "apiBaseUrl": "https://football.toolsforteaching.co.uk/api" }`
-   before building.
+   before building. `.config.json` is a static file in `public/`, so Vite
+   copies it into `dist/` unchanged rather than bundling it; it can also
+   be edited directly on the server afterwards (`dist/.config.json`) to
+   repoint the API without rebuilding.
 6. `cors.php` already accepts `https://football.toolsforteaching.co.uk`
    alongside any `localhost` port, so no changes are needed there.
 7. Force HTTPS and confirm PHP's `session.cookie_secure` is on in

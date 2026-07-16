@@ -16,7 +16,13 @@ phase.
 - Frontend never calls fantasy.premierleague.com directly (no CORS upstream);
   everything goes through `api/fpl.php` with its endpoint whitelist and cache.
 - The admin-editable FPL target lives in the `settings` DB table, not in
-  `.config.json`. `.config.json` holds only `apiBaseUrl`.
+  `.config.json`. `.config.json` holds only `apiBaseUrl`. It lives in
+  `public/.config.json` (git-ignored; sample at `public/.config.sample.json`)
+  so Vite copies it into `dist/` verbatim rather than bundling it, and
+  `src/api.js` fetches it at runtime (`loadConfig()`, awaited in
+  `main.jsx` before the app renders) instead of importing it. This lets a
+  built `dist/` be pointed at a different API by editing the deployed
+  `.config.json` in place, with no rebuild.
 - Every PHP endpoint starts with `require_once __DIR__ . '/cors.php';` then
   db.php. Never inline CORS headers. cors.php reflects localhost:ANY and
   https://football.toolsforteaching.co.uk, with credentials allowed.

@@ -8,7 +8,9 @@ import DataReferenceDrawer from '../components/workbench/DataReferenceDrawer.jsx
 import LearnDrawer from '../components/workbench/LearnDrawer.jsx';
 import { compileStudentCode } from '../sandbox/compile.js';
 import { STARTER_JSX, STARTER_CSS } from '../sandbox/starterTemplates.js';
+import { buildExportZip, downloadBlob } from '../export/buildExportZip.js';
 import { api } from '../api.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const AUTOSAVE_DELAY_MS = 30000;
 
@@ -23,6 +25,7 @@ const Editor = lazy(() => import('../components/workbench/Editor.jsx'));
  */
 export default function Workbench() {
   const { userId } = useParams();
+  const { user } = useAuth();
   const viewingOtherUser = Boolean(userId);
   const readOnly = viewingOtherUser;
 
@@ -33,6 +36,7 @@ export default function Workbench() {
   const [loaded, setLoaded] = useState(false);
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved | unsaved | error
   const [savedAt, setSavedAt] = useState(null);
+  const [exporting, setExporting] = useState(false);
   const [showExplorer, setShowExplorer] = useState(false);
   const [viewedDisplayName, setViewedDisplayName] = useState('');
   const [showDataReference, setShowDataReference] = useState(false);
@@ -141,6 +145,21 @@ export default function Workbench() {
     outputRef.current?.runCode(result.code, cssCode);
   }
 
+  /** Bundles the current JSX/CSS into a standalone Vite project zip and downloads it. */
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const name = viewingOtherUser ? viewedDisplayName : user?.display_name;
+      const blob = await buildExportZip({ jsxCode, cssCode, displayName: name });
+      const slug = (name || 'fpl-data-display').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      downloadBlob(blob, `${slug || 'fpl-data-display'}.zip`);
+    } catch {
+      setMessages((prev) => [...prev, withId({ type: 'error', text: 'Could not build the project export.' })]);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   /** @param {import('react').KeyboardEvent} e */
   function handleKeyDown(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -196,6 +215,9 @@ export default function Workbench() {
           </button>
           <button type="button" onClick={() => setRightDrawer('backups')}>
             Backups
+          </button>
+          <button type="button" onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Exporting...' : 'Export project'}
           </button>
         </div>
       </div>

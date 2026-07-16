@@ -43,7 +43,13 @@ These change the design as originally described, each for a concrete reason.
    points at our own PHP API. The admin settings screen edits a `settings`
    table row (`fpl_base_url`) that the proxy reads. This gives the admin
    control without redeploying the frontend, and students can never point
-   their code at an arbitrary URL.
+   their code at an arbitrary URL. `.config.json` itself lives in
+   `public/.config.json` rather than the project root, so it is a plain
+   static file copied into `dist/` by the build instead of a value baked
+   into the JS bundle; `src/api.js` fetches it at runtime and `main.jsx`
+   awaits that fetch before rendering. That means the deployed
+   `apiBaseUrl` can be changed by editing the file on the server, with no
+   rebuild.
 
 3. **The preset portion of DataDisplay.jsx (imports, JSDoc header) is shown
    read-only and prepended at compile time.** Students edit only the body.
@@ -116,7 +122,7 @@ These change the design as originally described, each for a concrete reason.
 | Backend | PHP 8.x, flat endpoint files under `api/` | PHPDoc throughout |
 | Auth | PHP sessions, httpOnly cookie | `password_hash()` / `password_verify()` |
 | DB | MariaDB via PDO, utf8mb4 | Laragon locally, Hostinger MySQL in prod |
-| Config (frontend) | `.config.json` | `apiBaseUrl` only |
+| Config (frontend) | `public/.config.json` | `apiBaseUrl` only; git-ignored, sample file committed, fetched at runtime |
 | Config (backend) | `api/config.php` | DB credentials; git-ignored, sample file committed |
 
 ## 5. Database schema
@@ -278,14 +284,17 @@ the output without being able to alter the saved copy.
   `http://localhost/ffootball/api` (symlink or copy into Laragon www; document
   the chosen mechanism in README).
 - DB: Laragon MariaDB, database `ffootball`.
-- `.config.json`: `{ "apiBaseUrl": "http://localhost/ffootball/api" }`.
+- `public/.config.json`: `{ "apiBaseUrl": "http://localhost/ffootball/api" }`.
 
 ### Production (Hostinger, https://football.toolsforteaching.co.uk)
 - `npm run build`, upload `dist/` contents to the subdomain's public_html.
+  `dist/.config.json` is a plain file copied from `public/.config.json` at
+  build time; it can also be edited directly on the server afterwards to
+  repoint `apiBaseUrl` without rebuilding.
 - Upload `api/` alongside it (`public_html/api/`).
 - Create the MariaDB database + user in hPanel; run `schema.sql` via
   phpMyAdmin; run `install.php` once to seed the admin; then delete it.
-- Production `.config.json`: `{ "apiBaseUrl": "https://football.toolsforteaching.co.uk/api" }`.
+- Production `public/.config.json` (before building): `{ "apiBaseUrl": "https://football.toolsforteaching.co.uk/api" }`.
 - cors.php accepts localhost:ANY (dev) plus the production origin.
 - Force HTTPS and set `session.cookie_secure` in production.
 
